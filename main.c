@@ -1,110 +1,50 @@
 #include<stdbool.h>
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-typedef struct{
-  char *buffer;
-  size_t buffer_length;
-  ssize_t input_length;
-}InputBuffer;
-
-ssize_t getline(char **lineptr, size_t *n, FILE *stream) {
-    char *bufptr = NULL;
-    char *p = bufptr;
-    size_t size;
-    int c;
-
-    if (lineptr == NULL) {
-        return -1;
-    }
-    if (stream == NULL) {
-        return -1;
-    }
-    if (n == NULL) {
-        return -1;
-    }
-    bufptr = *lineptr;
-    size = *n;
-
-    c = fgetc(stream);
-    if (c == EOF) {
-        return -1;
-    }
-    if (bufptr == NULL) {
-        bufptr = malloc(128);
-        if (bufptr == NULL) {
-            return -1;
-        }
-        size = 128;
-    }
-    p = bufptr;
-    while(c != EOF) {
-        if ((p - bufptr) > (size - 1)) {
-            size = size + 128;
-            bufptr = realloc(bufptr, size);
-            if (bufptr == NULL) {
-                return -1;
-            }
-        }
-        *p++ = c;
-        if (c == '\n') {
-            break;
-        }
-        c = fgetc(stream);
-    }
-
-    *p++ = '\0';
-    *lineptr = bufptr;
-    *n = size;
-
-    return p - bufptr - 1;
-}
+#include "InputBuffer.h"
+#include "LinuxAPIForWindows.h"
+#include "MetaCommandCompile.h"
+#include "StatementCompile.h"
 
 void PrintPrompt()
 {
   printf("db >");
 }
 
-InputBuffer* NewInputerBuffer()
-{
-  InputBuffer *inputBuffer = (InputBuffer*)malloc(sizeof(InputBuffer));
-  inputBuffer->buffer = NULL;
-  inputBuffer->input_length = 0;
-  inputBuffer->buffer_length = 0;
-  return inputBuffer;
-}
-
-void CloseInputBuffer(InputBuffer *inputBuffer)
-{
-  free(inputBuffer->buffer);
-  free(inputBuffer);
-}
-
-int ReadInput(InputBuffer* inputBuffer)
-{
-  ssize_t byteCount  = getline(&(inputBuffer->buffer),
-                               &(inputBuffer->buffer_length), stdin);
-  if(byteCount == -1) {
-    printf("read input error \n");
-    exit(EXIT_FAILURE);
-  }
-  inputBuffer->input_length = byteCount - 1;
-  inputBuffer->buffer[byteCount - 1] = 0;
-  return 0;
-}
-
 int main(int argc, char *argv[])
 {
   InputBuffer *inputBuffer = NewInputerBuffer();
+  Table *table = new_table();
   while(true) {
     PrintPrompt();
     ReadInput(inputBuffer);
-    if (strcmp(inputBuffer->buffer, ".exit") == 0) {
-        CloseInputBuffer(inputBuffer);
-        exit(EXIT_SUCCESS);
+    if(inputBuffer->buffer[0] == '.'){
+      switch (do_meta_command(inputBuffer, table)) {
+        case (META_COMMAND_SUCCESS):
+          continue;
+        case (META_COMMAND_UNRECONIZED_COMMAND):
+          printf("Unreconsized command\n");
+          continue;
+      }
     }
 
-    printf("unrecognized command %s\n", inputBuffer->buffer);
+    Statement statement;
+    switch (prepare_statment(inputBuffer, &statement)) {
+      case (PREPARE_SUCESS):
+        break;
+      case (PREPARE_SYNTAX_ERROR):
+        printf("Synax error can not parser the statement\n");
+        break;
+      case(PREPARE_UNRECONIZED_STATMENT):
+        printf("unrecognized keyword in start of '%s'\n", inputBuffer->buffer);
+        break;
+    }
+    switch(excute_statement(&statement)){
+       case EXCUTE_TABLE_FULL:
+        printf("table is full\n");
+        break;
+       case EXCUTE_SUCESS:
+        printf("excute statement success\n");
+        break;
+    }
   }
   return 0;
 }
