@@ -17,6 +17,7 @@ PrepareResult prepare_statment(InputBuffer* inputBuffer, Statement* statement)
     statement->type = STATMENT_SELECT;
     return PREPARE_SUCESS;
   }
+  statement->type = STATMENT_OPERATION_INVALID;
   return PREPARE_UNRECONIZED_STATMENT;
 }
 
@@ -38,7 +39,7 @@ ExcuteResult excute_insert(Statement *statment, Table *table)
   if(table->num_rows >= TABLE_MAX_ROWS) {
       return EXCUTE_TABLE_FULL;
   }
-  void *insert_handle = row_slot(table, (++(table->num_rows)));
+  void *insert_handle = row_slot(table, ((table->num_rows)++));
   serialize_row(&(statment->row_to_insert), insert_handle);
   return EXCUTE_SUCESS;
 }

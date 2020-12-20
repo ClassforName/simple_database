@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project(SimpleDB)
+include_directories(${PROJECT_SOURCE_DIR})
+add_executable(db data.c InputBuffer.c LinuxAPIForWindows.c main.c
+              MetaCommandCompile.c StatementCompile.c table.c)

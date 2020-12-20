@@ -15,13 +15,14 @@ typedef enum{
 }ExcuteResult;
 typedef enum{
   STATMENT_INSERT,
-  STATMENT_SELECT
+  STATMENT_SELECT,
+  STATMENT_OPERATION_INVALID
 }StatementType;
 typedef struct{
   StatementType type;
   Row row_to_insert;
 }Statement;
-ExcuteResult excute_statement(Statement* statement);
+ExcuteResult excute_statement(Statement* statement, Table *table);
 ExcuteResult excute_insert(Statement *statement, Table *table);
 ExcuteResult excute_select(Statement *statement, Table *table);
 PrepareResult prepare_statment(InputBuffer* inputBuffer, Statement* statement);
