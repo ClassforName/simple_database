@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
         printf("unrecognized keyword in start of '%s'\n", inputBuffer->buffer);
         break;
     }
-    switch(excute_statement(&statement)){
+    switch(excute_statement(&statement, table)){
        case EXCUTE_TABLE_FULL:
         printf("table is full\n");
         break;
