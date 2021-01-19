@@ -11,8 +11,13 @@ void PrintPrompt()
 
 int main(int argc, char *argv[])
 {
+  // if(argc < 2){
+  //   printf("Must supply a database filenname \n");
+  //   exit(EXIT_FAILURE);
+  // }
+  char* filename = "dbfile";
+  Table* table = db_open(filename);
   InputBuffer *inputBuffer = NewInputerBuffer();
-  Table *table = new_table();
   while(true) {
     PrintPrompt();
     ReadInput(inputBuffer);

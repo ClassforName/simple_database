@@ -58,6 +58,10 @@ ExcuteResult excute_insert(Statement *statment, Table *table)
       return EXCUTE_TABLE_FULL;
   }
   void *insert_handle = row_slot(table, ((table->num_rows)++));
+  if(insert_handle == NULL){
+    printf("get page failed \n");
+    exit(EXIT_FAILURE);
+  }
   serialize_row(&(statment->row_to_insert), insert_handle);
   return EXCUTE_SUCESS;
 }
