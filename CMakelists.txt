@@ -1,5 +1,15 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.19)
 project(SimpleDB)
 include_directories(${PROJECT_SOURCE_DIR})
-add_executable(db data.c InputBuffer.c LinuxAPIForWindows.c main.c
-              MetaCommandCompile.c StatementCompile.c table.c)
+
+set(DBRESOURCEFILE
+    "${CMAKE_CURRENT_SOURCE_DIR}/data.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/InputBuffer.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/LinuxAPIForWindows.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/main.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/MetaCommandCompile.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/StatementCompile.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/table.c"
+)
+
+add_executable(db ${DBRESOURCEFILE})

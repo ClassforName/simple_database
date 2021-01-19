@@ -1,17 +1,35 @@
 #include"InputBuffer.h"
 #include "StatementCompile.h"
+PrepareResult prepare_insert(InputBuffer* inputerBuffer, Statement* statement){
+  statement->type = STATMENT_INSERT;
+  char* keyWord = strtok(inputerBuffer->buffer, " ");
+  char* id_string = strtok(NULL, " ");
+  char* userName = strtok(NULL, " ");
+  char* email = strtok(NULL, " ");
+  if(keyWord == NULL || id_string == NULL || userName == NULL || email == NULL){
+    return PREPARE_SYNTAX_ERROR;
+  }
+
+  int id = atoi(id_string);
+  if(id < 0){
+    return PREPAER_INVALID_ID;
+  }
+  
+  if(strlen(userName) > COLUMN_USERNAME_SIZE || strlen(email) > COLUMN_EMAIL_SIZE) {
+    return PREPARE_STRING_TOO_LONG;
+  }
+
+  statement->row_to_insert.id = id;
+  strcpy(statement->row_to_insert.username, userName);
+  strcpy(statement->row_to_insert.email, email);
+
+  return PREPARE_SUCESS;
+}
+
 PrepareResult prepare_statment(InputBuffer* inputBuffer, Statement* statement)
 {
   if(strncmp(inputBuffer->buffer, "insert", 6) == 0){
-    statement->type = STATMENT_INSERT;
-    int args_assigned = sscanf(inputBuffer->buffer,"insert %d %s %s",
-                               &(statement->row_to_insert.id),
-                               &(statement->row_to_insert.username),
-                               &(statement->row_to_insert.email));
-    if(args_assigned < 3){
-      return PREPARE_SYNTAX_ERROR;
-    }
-    return PREPARE_SUCESS;
+      return prepare_insert(inputBuffer, statement);
   }
   if(strcmp(inputBuffer->buffer, "select") == 0){
     statement->type = STATMENT_SELECT;
