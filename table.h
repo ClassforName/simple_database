@@ -10,10 +10,18 @@ extern const uint32_t ROW_SIZE;
 #define ROWS_PER_PAGE (PAGE_SIZE / ROW_SIZE)
 #define TABLE_MAX_ROWS (ROWS_PER_PAGE * TABLE_MAX_SIZE)
 typedef struct{
-  uint32_t num_rows;
+  int file_descriptor;
+  int file_length;
   void* pages[TABLE_MAX_SIZE];
+}Pager;
+typedef struct{
+  uint32_t num_rows;
+  Pager* pager;
 }Table;
 void *row_slot(Table *table, uint32_t row_num);
-Table *new_table();
-void free_table(Table *table);
+static Pager* open_pager(const char* filename);
+static void* get_page(Pager* pager, uint32_t page_num);
+static void pager_flush(Pager* pager, uint32_t page_num, uint32_t size);
+Table *db_open(const char* filename);
+void db_close(Table *table);
 #endif
