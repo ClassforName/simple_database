@@ -29,6 +29,14 @@ int main(int argc, char *argv[])
     Statement statement;
     switch (prepare_statment(inputBuffer, &statement)) {
       case (PREPARE_SUCESS):
+        switch(excute_statement(&statement, table)){
+          case EXCUTE_TABLE_FULL:
+            printf("table is full\n");
+          break;
+          case EXCUTE_SUCESS:
+            printf("excute statement success\n");
+          break;
+        }
         break;
       case (PREPARE_SYNTAX_ERROR):
         printf("Synax error can not parser the statement\n");
@@ -36,13 +44,11 @@ int main(int argc, char *argv[])
       case(PREPARE_UNRECONIZED_STATMENT):
         printf("unrecognized keyword in start of '%s'\n", inputBuffer->buffer);
         break;
-    }
-    switch(excute_statement(&statement, table)){
-       case EXCUTE_TABLE_FULL:
-        printf("table is full\n");
+      case(PREPARE_STRING_TOO_LONG):
+        printf("string too long. \n");
         break;
-       case EXCUTE_SUCESS:
-        printf("excute statement success\n");
+      case(PREPAER_INVALID_ID):
+        printf("the id is invalid \n");
         break;
     }
   }
