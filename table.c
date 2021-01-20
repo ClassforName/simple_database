@@ -82,11 +82,11 @@ void db_close(Table* table){
   free(table);
 }
 
-void *row_slot(Table *table, uint32_t row_num)
+void *cursor_value(Cursor* cursor)
 {
-  uint32_t page_num = row_num / ROWS_PER_PAGE;
-  void* page = get_page(table->pager, page_num);
-  uint32_t row_offset = row_num % PAGE_SIZE;
+  uint32_t page_num = cursor->row_nums / ROWS_PER_PAGE;
+  void* page = get_page(cursor->table->pager, page_num);
+  uint32_t row_offset = cursor->row_nums % PAGE_SIZE;
   uint32_t byte_offset = row_offset * ROW_SIZE;
   return page + byte_offset;
 }
@@ -114,4 +114,27 @@ Table *db_open(const char* filename){
   table->num_rows = row_nums;
   table->pager = pager;
   return table;
+}
+
+Cursor *table_start(Table* table){
+  Cursor* cursor = malloc(sizeof(Cursor));
+  cursor->table = table;
+  cursor->row_nums = 0;
+  cursor->end_of_table = (table->num_rows == 0);
+  return cursor;
+}
+
+Cursor *table_end(Table* table){
+  Cursor* cursor = malloc(sizeof(Cursor));
+  cursor->table = table;
+  cursor->row_nums = table->num_rows;
+  cursor->end_of_table = true;
+  return cursor;
+}
+
+void *advance_cursor(Cursor* cursor){
+  cursor->row_nums++;
+  if(cursor->row_nums >= cursor->table->num_rows){
+    cursor->end_of_table = true;
+  }
 }
