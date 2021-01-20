@@ -57,21 +57,27 @@ ExcuteResult excute_insert(Statement *statment, Table *table)
   if(table->num_rows >= TABLE_MAX_ROWS) {
       return EXCUTE_TABLE_FULL;
   }
-  void *insert_handle = row_slot(table, ((table->num_rows)++));
+  Cursor* cursor = table_end(table);
+  void *insert_handle = cursor_value(cursor);
   if(insert_handle == NULL){
     printf("get page failed \n");
     exit(EXIT_FAILURE);
   }
   serialize_row(&(statment->row_to_insert), insert_handle);
+  table->num_rows++;
+  free(cursor);
   return EXCUTE_SUCESS;
 }
 
 ExcuteResult excute_select(Statement *statement, Table *table)
 {
+  Cursor* cursor = table_start(table);
   Row row;
-  for(int i = 0; i < table->num_rows; i++){
-    deserialize_row(row_slot(table, i), &row);
+  while(!(cursor->end_of_table)){
+    deserialize_row(cursor_value(cursor), &row);
     print_row(&row);
+    advance_cursor(cursor);
   }
+  free(cursor);
   return EXCUTE_SUCESS;
 }
