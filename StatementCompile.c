@@ -56,11 +56,20 @@ ExcuteResult excute_statement(Statement* statement, Table* table){
 ExcuteResult excute_insert(Statement *statment, Table *table)
 {
   void *node = get_page(table->pager, table->root_page_num);
-  if((*leaf_node_num_cells(node)) >= get_leaf_node_max_cells()){
+  uint32_t node_num = *(leaf_node_num_cells(node));
+  if(node_num >= get_leaf_node_max_cells()){
     return EXCUTE_TABLE_FULL;
   }
-  Cursor* cursor = table_end(table);
-  leaf_node_insert(cursor, statment->row_to_insert.id, &(statment->row_to_insert));
+  Row *row_to_insert =  &(statment->row_to_insert);
+  uint32_t key_to_insert = row_to_insert->id;
+  Cursor* cursor = table_find(row_to_insert->id, table);
+  if(cursor->cell_num < node_num){
+    uint32_t ket_at_index = *leaf_node_key(node, cursor->cell_num);
+    if(ket_at_index == key_to_insert){
+      return EXCUTE_DUPLICATE_KEY;
+    }
+  }
+  leaf_node_insert(cursor, statment->row_to_insert.id, row_to_insert);
   free(cursor);
   return EXCUTE_SUCESS;
 }

@@ -33,4 +33,6 @@ void* get_page(Pager* pager, uint32_t page_num);
 static void pager_flush(Pager* pager, uint32_t page_num);
 Table *db_open(const char* filename);
 void db_close(Table *table);
+Cursor *table_find(uint32_t key, Table* table);
+static Cursor* leaf_node_find(Table *table, uint32_t page_num, uint32_t key);
 #endif
