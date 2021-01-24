@@ -1,3 +1,4 @@
+#include"Node.h"
 #include"InputBuffer.h"
 #include "StatementCompile.h"
 PrepareResult prepare_insert(InputBuffer* inputerBuffer, Statement* statement){
@@ -54,17 +55,12 @@ ExcuteResult excute_statement(Statement* statement, Table* table){
 
 ExcuteResult excute_insert(Statement *statment, Table *table)
 {
-  if(table->num_rows >= TABLE_MAX_ROWS) {
-      return EXCUTE_TABLE_FULL;
+  void *node = get_page(table->pager, table->root_page_num);
+  if((*leaf_node_num_cells(node)) >= get_leaf_node_max_cells()){
+    return EXCUTE_TABLE_FULL;
   }
   Cursor* cursor = table_end(table);
-  void *insert_handle = cursor_value(cursor);
-  if(insert_handle == NULL){
-    printf("get page failed \n");
-    exit(EXIT_FAILURE);
-  }
-  serialize_row(&(statment->row_to_insert), insert_handle);
-  table->num_rows++;
+  leaf_node_insert(cursor, statment->row_to_insert.id, &(statment->row_to_insert));
   free(cursor);
   return EXCUTE_SUCESS;
 }
