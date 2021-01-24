@@ -38,6 +38,9 @@ int main(int argc, char *argv[])
           case EXCUTE_TABLE_FULL:
             printf("table is full\n");
           break;
+          case EXCUTE_DUPLICATE_KEY:
+            printf("the key is duplicate \n");
+            break;
           case EXCUTE_SUCESS:
             printf("excute statement success\n");
           break;

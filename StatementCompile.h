@@ -13,7 +13,8 @@ typedef enum{
 }PrepareResult;
 typedef enum{
   EXCUTE_SUCESS,
-  EXCUTE_TABLE_FULL
+  EXCUTE_TABLE_FULL,
+  EXCUTE_DUPLICATE_KEY
 }ExcuteResult;
 typedef enum{
   STATMENT_INSERT,
