@@ -1,5 +1,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include "Node.h"
 #include "table.h"
 

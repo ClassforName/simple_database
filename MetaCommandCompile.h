@@ -3,7 +3,7 @@
 #include<string.h>
 #include<stddef.h>
 #include "InputBuffer.h"
-#include "Table.h"
+#include "table.h"
 typedef enum{
   META_COMMAND_SUCCESS,
   META_COMMAND_UNRECONIZED_COMMAND
