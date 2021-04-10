@@ -57,9 +57,6 @@ ExcuteResult excute_insert(Statement *statment, Table *table)
 {
   void *node = get_page(table->pager, table->root_page_num);
   uint32_t node_num = *(leaf_node_num_cells(node));
-  if(node_num >= get_leaf_node_max_cells()){
-    return EXCUTE_TABLE_FULL;
-  }
   Row *row_to_insert =  &(statment->row_to_insert);
   uint32_t key_to_insert = row_to_insert->id;
   Cursor* cursor = table_find(row_to_insert->id, table);
