@@ -15,6 +15,7 @@ set(DBRESOURCEFILE
     "${CMAKE_CURRENT_SOURCE_DIR}/StatementCompile.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/table.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/Node.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/db.c"
 )
 
 add_executable(db ${DBRESOURCEFILE})

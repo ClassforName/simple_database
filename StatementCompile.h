@@ -11,23 +11,34 @@ typedef enum{
   PREPARE_STRING_TOO_LONG,
   PREPAER_INVALID_ID
 }PrepareResult;
+
 typedef enum{
   EXCUTE_SUCESS,
   EXCUTE_TABLE_FULL,
   EXCUTE_DUPLICATE_KEY
 }ExcuteResult;
+
 typedef enum{
   STATMENT_INSERT,
   STATMENT_SELECT,
   STATMENT_OPERATION_INVALID
 }StatementType;
+
 typedef struct{
   StatementType type;
   Row row_to_insert;
+  PrepareResult prepareResult;
+  ExcuteResult excuteResult;
 }Statement;
-ExcuteResult excute_statement(Statement* statement, Table *table);
-ExcuteResult excute_insert(Statement *statement, Table *table);
-ExcuteResult excute_select(Statement *statement, Table *table);
-PrepareResult prepare_insert(InputBuffer* inputerBuffer, Statement* statement);
-PrepareResult prepare_statment(InputBuffer* inputBuffer, Statement* statement);
+
+void excuteOperation(InputBuffer *inputBuffer, Table* table);
+static void excute_insert(Statement *statement, Table *table);
+static void excute_select(Statement *statement, Table *table);
+static void prepare_insert(InputBuffer* inputerBuffer, Statement* statement);
+static void prepare_select(InputBuffer* inputerBuffer, Statement* statement);
+static void after_insert(Statement *statement, Table *table);
+static void after_select(Statement *statement, Table *table);
+static void after_invalidOperation(Statement *statement, Table *table);
+static void excuteLog(Statement *statement);
+static void ParseOperationType(InputBuffer* inputBuffer, Statement* statement);
 #endif
