@@ -30,7 +30,7 @@ void* get_page(Pager* pager, uint32_t page_num){
   return pager->pages[page_num];
 }
 
-static void pager_flush(Pager* pager, uint32_t page_num){
+void pager_flush(Pager* pager, uint32_t page_num){
   if(pager->pages[page_num] == NULL){
     printf("try to flush null page \n");
     exit(EXIT_FAILURE);
@@ -49,33 +49,6 @@ static void pager_flush(Pager* pager, uint32_t page_num){
   }
 }
 
-void db_close(Table* table){
-  Pager* pager = table->pager;
-  for(uint32_t i = 0; i <= pager->nums_page; i++){
-    if(pager->pages[i] == NULL){
-      continue;
-    }
-    pager_flush(pager, i);
-    free(pager->pages[i]);
-    pager->pages[i] = NULL;
-  }
-
-  int result = close(pager->file_descriptor);
-  if(result == -1){
-    printf("Error close file. \n");
-    exit(EXIT_FAILURE);
-  }
-  for(uint32_t i = 0; i < TABLE_MAX_SIZE; i++){
-    void* page = pager->pages[i];
-    if(page){
-      free(page);
-      pager->pages[i] = NULL;
-    }
-  }
-  free(pager);
-  free(table);
-}
-
 void *cursor_value(Cursor* cursor)
 {
   uint32_t page_num = cursor->page_num;
@@ -83,7 +56,7 @@ void *cursor_value(Cursor* cursor)
   return leaf_node_value(node, cursor->cell_num);
 }
 
-static Pager* open_pager(const char* filename){
+Pager* open_pager(const char* filename){
   int fd = open(filename, O_RDWR | O_CREAT, S_IWUSR | S_IRUSR);
   if(fd == -1){
     printf("unable to open file \n");
@@ -102,18 +75,6 @@ static Pager* open_pager(const char* filename){
     pager->pages[i] = NULL;
   }
   return pager;
-}
-
-Table *db_open(const char* filename){
-  Pager* pager = open_pager(filename);
-  Table *table = (Table *)malloc(sizeof(Table));
-  table->root_page_num = 0;
-  table->pager = pager;
-  if(pager->nums_page == 0){
-    void *root_node = get_page(pager, 0);
-    initialize_leaf_node(root_node);
-  }
-  return table;
 }
 
 Cursor *table_start(Table* table){

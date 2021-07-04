@@ -72,6 +72,7 @@ void leaf_node_insert(Cursor *cursor, uint32_t key, Row *value)
 }
 
 void print_constant(){
+    printf("Constants:\n");
     printf("ROW_SIZE: %ld\n", ROW_SIZE);
     printf("COMMON_NODE_HEADER_SIZE: %ld\n", COMMON_NODE_HEADER_SIZE);
     printf("LEAF_NODE_HEADR_SIZE: %ld\n", LEAF_NODE_HEADER_SIZE);
@@ -81,6 +82,7 @@ void print_constant(){
 }
 
 void print_leaf_node(void *node){
+  printf("Tree:\n");
   uint32_t cell_num = *leaf_node_num_cells(node);
   printf("leaf(size %d)\n", cell_num);
   for(uint32_t i = 0; i < cell_num; i++){

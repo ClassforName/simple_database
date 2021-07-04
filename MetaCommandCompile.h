@@ -3,10 +3,9 @@
 #include<string.h>
 #include<stddef.h>
 #include "InputBuffer.h"
-#include "table.h"
-typedef enum{
-  META_COMMAND_SUCCESS,
-  META_COMMAND_UNRECONIZED_COMMAND
-}MetaCommandResult;
-MetaCommandResult do_meta_command(InputBuffer* inputBuffer, Table *table);
+#include "table.h";
+static void do_meta_command_exit(InputBuffer* inputBuffer, Table *table);
+static void do_meta_command_constants(InputBuffer *inputBuffer, Table* table);
+static void do_meta_command_dbTree(InputBuffer* inputBuffer, Table* table);
+void do_meta_command(InputBuffer* inputBuffer, Table *table);
 #endif
